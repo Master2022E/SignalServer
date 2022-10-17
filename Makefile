@@ -6,6 +6,12 @@ all: run
 logs:
 	docker logs $(CONTAINER_NAME) -f
 
+publish: tag
+	docker push $(username)/$(IMAGE_NAME):latest
+
+tag: build
+	docker tag $(IMAGE_NAME) $(username)/$(IMAGE_NAME):latest
+
 run: build
 	docker run -d -p 8080:8080 --name $(CONTAINER_NAME) $(IMAGE_NAME):latest
 
