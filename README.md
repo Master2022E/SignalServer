@@ -17,7 +17,7 @@ make -i
 To publish the docker image
 ```shell
 docker login
-make publish username=foo
+make -i publish username=foo
 ```
 
 to run the docker image on a server
