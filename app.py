@@ -1,15 +1,32 @@
 from flask import Flask, request, render_template
 from flask_socketio import SocketIO, emit, join_room
+from flask_cors import CORS, cross_origin
+import requests
 
 
 app = Flask(__name__)
 app.secret_key = 'random secret key!'
+cors = CORS(app)
 socketio = SocketIO(app, cors_allowed_origins="*")
+
 
 @app.route("/")
 @app.route("/index.html")
 def index():
     return render_template('index.html', message=request.remote_addr)
+
+
+@app.route("/ip/location/<ip>")
+@cross_origin()
+def ip_location(ip):
+    r = requests.get(url='http://ip-api.com/json/' + ip +
+                     '?fields=country,regionName,city,isp', timeout=60)
+    response = app.response_class(
+        response=r.text,
+        status=200,
+        mimetype='application/json'
+    )
+    return response
 
 
 @socketio.on('join')
@@ -34,9 +51,6 @@ def transfer_data(message):
 def default_error_handler(e):
     print("Error: {}".format(e))
     socketio.stop()
-
-
-
 
 
 if __name__ == '__main__':
