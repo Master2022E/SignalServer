@@ -28,5 +28,5 @@ stop:
 local-install:
 	python -m pip install -r requirements.txt
 
-lcoal-run:
+local-run:
 	python -m flask run --host=0.0.0.0 --port=8080
