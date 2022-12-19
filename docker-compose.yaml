@@ -1,0 +1,18 @@
+version: '3.3'
+services:
+
+  caddy:
+    container_name: caddy
+    image: caddy:2-alpine
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile
+      - ./caddy/data:/data # Optional
+      - ./caddy/config:/config # Optional
+
+  signal:
+    container_name: signal
+    build: .
+    #ports:
+    #  - "8000:8080"
