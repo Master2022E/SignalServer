@@ -13,12 +13,25 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 @app.route("/")
 @app.route("/index.html")
 def index():
-    return render_template('index.html', message=request.remote_addr)
+    ip = request.headers.get('X-Forwarded-For', request.remote_addr)
+    return render_template('index.html', forwarded=ip)
 
+@app.route("/ip/location")
+@cross_origin()
+def ip_location():
+    ip = request.headers.get('X-Forwarded-For', request.remote_addr)
+    r = requests.get(url='http://ip-api.com/json/' + ip +
+                     '?fields=country,regionName,city,isp', timeout=60)
+    response = app.response_class(
+        response=r.text,
+        status=200,
+        mimetype='application/json'
+    )
+    return response
 
 @app.route("/ip/location/<ip>")
 @cross_origin()
-def ip_location(ip):
+def ip_locationWithIp(ip):
     r = requests.get(url='http://ip-api.com/json/' + ip +
                      '?fields=country,regionName,city,isp', timeout=60)
     response = app.response_class(
