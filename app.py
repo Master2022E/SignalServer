@@ -2,6 +2,7 @@ from flask import Flask, request, render_template
 from flask_socketio import SocketIO, emit, join_room
 from flask_cors import CORS, cross_origin
 import requests
+import json
 
 
 app = Flask(__name__)
@@ -22,8 +23,13 @@ def ip_location():
     ip = request.headers.get('X-Forwarded-For', request.remote_addr)
     r = requests.get(url='http://ip-api.com/json/' + ip +
                      '?fields=country,regionName,city,isp', timeout=60)
+
+    # Add ip to the response
+    r = r.json()
+    r['ip'] = ip
+
     response = app.response_class(
-        response=r.text,
+        response=json.dumps(r).encode('utf-8'),
         status=200,
         mimetype='application/json'
     )
@@ -34,8 +40,13 @@ def ip_location():
 def ip_locationWithIp(ip):
     r = requests.get(url='http://ip-api.com/json/' + ip +
                      '?fields=country,regionName,city,isp', timeout=60)
+
+    # Add ip to the response
+    r = r.json()
+    r['ip'] = ip
+
     response = app.response_class(
-        response=r.text,
+        response=json.dumps(r).encode('utf-8'),
         status=200,
         mimetype='application/json'
     )
